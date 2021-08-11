@@ -5,8 +5,11 @@ from Student_Info import StudentInfo
 from GE_Requirements import GeRequirements
 from GE_Progress import GEProgress
 from Major_Requirements import MajorRequirements
+from Major_Progress import MajorProgress
+from Degree_Completion_Report import DegreeCompletionReport
 
-def AAT_degree_processing(student_id, courses, major, major_name, major_course_requirements):
+def AAT_degree_processing(student_id, courses, major, major_name, major_course_requirements, **kwargs):
+
     student = StudentInfo(student_id, courses)
     student.eligible_course_list()
     ge_requirements = GeRequirements(student.degree_applicable_dict)
@@ -29,21 +32,76 @@ def AAT_degree_processing(student_id, courses, major, major_name, major_course_r
     major = MajorRequirements(revised_course_list=student.degree_applicable_dict,
                               completed_ge_courses=ge_requirements.completed_ge_courses,
                               major_requirements=major_course_requirements)
+    if len(kwargs) == 12:
+        major.major_courses_completed(area_name=kwargs['major1'], total_units=kwargs['major1_units'],
+                                      number_of_disciplines=kwargs['major1_disciplines'])
+        major.major_courses_completed(area_name=kwargs['major2'], total_units=kwargs['major2_units'],
+                                      number_of_disciplines=kwargs['major2_disciplines'])
+        major.major_courses_completed(area_name=kwargs['major3'], total_units=kwargs['major3_units'],
+                                      number_of_disciplines=kwargs['major3_disciplines'])
+        major.major_courses_completed(area_name=kwargs['major4'], total_units=kwargs['major4_units'],
+                                      number_of_disciplines=kwargs['major4_disciplines'])
+    if len(kwargs) == 6:
+        major.major_courses_completed(area_name=kwargs['major1'], total_units=kwargs['major1_units'],
+                                      number_of_disciplines=kwargs['major1_disciplines'])
+        major.major_courses_completed(area_name=kwargs['major2'], total_units=kwargs['major2_units'],
+                                      number_of_disciplines=kwargs['major2_disciplines'])
 
+    major_report = MajorProgress(student_id=student.student_id,
+                                 major_course_dict=major.major_course_dict,
+                                 major_units=major.major_units_list,
+                                 area_units=major.area_units_dict,
+                                 no_of_courses_required=major.major_no_courses_requirement_dict)
+    major_report.major_requirements_completed()
+
+    degree_completion = DegreeCompletionReport(
+        major_requirements_dict=major.major_requirements_dict,
+        completed_ge_courses=ge_requirements.completed_ge_courses,
+        completed_ge_units=ge_requirements.completed_ge_units,
+        major_course_dict=major.major_course_dict,
+        area_units_dict=major.area_units_dict,
+        major_units_list=major.major_units_list,
+        student_id=student_id,
+        student_major=major_name,
+        missing_ge=degree_reports.missing_ge_courses,
+        missing_major_courses=major_report.missing_courses_dict2)
+    degree_completion.degree_completion()
 
 pd.set_option('display.max_columns', None)
 
 student_course_list = pd.read_csv(
-    "C:/Users/fmixson/Desktop/Programming/Enrollment_Histories/A bit longer Enrollment history.csv")
+    "C:/Users/fmixson/Desktop/Programming/Enrollment_Histories/AbitShorterList.csv")
+
 student_id_list = []
 
 for i in range(len(student_course_list)):
     if student_course_list.loc[i, "ID"] not in student_id_list:
         student_id_list.append(student_course_list.loc[i, "ID"])
-
+print(student_id_list)
 for student_id in student_id_list:
-        AAT_degree_processing(student_id=student_id, courses=student_course_list, major='english_major_requirements',
-                              major_name="English_AAT", major_course_requirements='English_AAT.csv')
+
+    AAT_degree_processing(student_id=student_id, courses=student_course_list, major='comm_major_requirements',
+                          major_name="COMM_AAT", major_course_requirements='AAT_COMM.csv',
+                          major1='Core', major1_units=3, major1_disciplines=1,
+                          major2='ListA', major2_units=6, major2_disciplines=1,
+                          major3='ListB', major3_units=3, major3_disciplines=1,
+                          major4='ListC', major4_units=3, major4_disciplines=1)
+
+    # AAT_degree_processing(student_id=student_id, courses=student_course_list, major='english_major_requirements',
+    #                       major_name="English_AAT", major_course_requirements='AAT_English.csv',
+    #                       major1='Core', major1_units=3, major1_disciplines=1,
+    #                       major2='ListA', major2_units=6, major2_disciplines=1,
+    #                       major3='ListB', major3_units=3, major3_disciplines=1,
+    #                       major4='ListC', major4_units=3, major4_disciplines=1)
+    #
+    # AAT_degree_processing(student_id=student_id, courses=student_course_list, major='english_major_requirements',
+    #                       major_name="Spanish_AAT", major_course_requirements='AAT_Spanish.csv',
+    #                       major1='Core', major1_units=19, major1_disciplines=1,
+    #                       major2='ListA', major2_units=3, major2_disciplines=1)
+
+DegreeCompletionReport.LS_AA_Degrees_df.sort_values(by=['Total_Missing'], inplace=True, ascending=True)
+DegreeCompletionReport.LS_AA_Degrees_df.to_csv('C:/Users/fmixson/Desktop/Programming/AAT_LA_Division_Degrees.csv')
+
 
 
 

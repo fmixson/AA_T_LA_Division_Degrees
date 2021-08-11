@@ -34,12 +34,12 @@ class DegreeCompletionReport:
         degree_status_major = False
         # length1 = len(DegreeCompletion.degree_units_df)
         length = len(DegreeCompletionReport.LS_AA_Degrees_df)
-        if len(self.completed_ge_courses) >= 10:
-            if sum(self.completed_ge_units) >= 20:
-                DegreeCompletionReport.LS_AA_Degrees_df.loc[length, 'GE_Status'] = 'Completed'
-                degree_status_ge = True
-            else:
-                DegreeCompletionReport.LS_AA_Degrees_df.loc[length, 'GE_Status'] = 'Incomplete'
+        if len(self.completed_ge_courses) >= 14:
+            # if sum(self.completed_ge_units) >= 39:
+            DegreeCompletionReport.LS_AA_Degrees_df.loc[length, 'GE_Status'] = 'Completed'
+
+            # else:
+            #     DegreeCompletionReport.LS_AA_Degrees_df.loc[length, 'GE_Status'] = 'Incomplete'
         else:
             DegreeCompletionReport.LS_AA_Degrees_df.loc[length, 'GE_Status'] = 'Incomplete'
             # print(('mcd',len(self.major_course_dict)), ('mrd', len(self.major_requirements_dict)))
