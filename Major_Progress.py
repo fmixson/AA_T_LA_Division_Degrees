@@ -38,8 +38,8 @@ class MajorProgress(MajorRequirements):
             else:
                 self.missing_major_courses_dict[major_key] = f'{int(self.no_of_courses_required[major_key])} missing course(s)'
                 self.missing_courses_dict2[major_key] = int(self.no_of_courses_required[major_key])
-                print('missing', self.missing_major_courses_dict)
+                # print('missing', self.missing_major_courses_dict)
         total_missing_major_courses = sum(self.missing_courses_dict2.values())
-        print(total_missing_major_courses)
-        print('missing', self.missing_major_courses_dict)
+        # print(total_missing_major_courses)
+        # print('missing', self.missing_major_courses_dict)
         return self.missing_courses_dict2

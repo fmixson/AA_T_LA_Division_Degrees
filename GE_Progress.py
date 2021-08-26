@@ -20,7 +20,7 @@ class GEProgress:
             # print('aa require', DegreeProgressReports.AA_ge_requirements)
             if ge_key not in self.completed_ge_courses:
                 self.missing_ge_courses.append(ge_key)
-        print('missing ge', self.missing_ge_courses)
+        # print('missing ge', self.missing_ge_courses)
 
         # print('no of missing ge', len(self.missing_ge_courses))
         # DegreeProgressReports.degree_courses_df.loc[length, 'GE_Courses'] = ge_list

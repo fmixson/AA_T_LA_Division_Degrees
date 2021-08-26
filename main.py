@@ -8,7 +8,7 @@ from Major_Requirements import MajorRequirements
 from Major_Progress import MajorProgress
 from Degree_Completion_Report import DegreeCompletionReport
 
-def AAT_degree_processing(student_id, courses, major, major_name, major_course_requirements, **kwargs):
+def AAT_degree_processing(student_id, courses, major_name, major_course_requirements, **kwargs):
 
     student = StudentInfo(student_id, courses)
     student.eligible_course_list()
@@ -19,6 +19,7 @@ def AAT_degree_processing(student_id, courses, major, major_name, major_course_r
     ge_requirements.ge_courses_completed('Phys_Sci')
     ge_requirements.ge_courses_completed('Bio_Sci')
     ge_requirements.ge_courses_completed('Sci_Labs')
+    ge_requirements.ge_courses_completed('Math')
     ge_requirements.ge_courses_completed('Arts')
     ge_requirements.ge_courses_completed('Hum')
     ge_requirements.ge_courses_completed('Arts_Hum')
@@ -29,9 +30,12 @@ def AAT_degree_processing(student_id, courses, major, major_name, major_course_r
     degree_reports = GEProgress(ge_requirements.completed_ge_courses, ge_requirements.completed_ge_units,
                                 student.student_id)
     degree_reports.ge_requirements_completed()
+
+
     major = MajorRequirements(revised_course_list=student.degree_applicable_dict,
                               completed_ge_courses=ge_requirements.completed_ge_courses,
-                              major_requirements=major_course_requirements)
+                              major_requirements=major_course_requirements,
+                              major_name=major_name)
     if len(kwargs) == 12:
         major.major_courses_completed(area_name=kwargs['major1'], total_units=kwargs['major1_units'],
                                       number_of_disciplines=kwargs['major1_disciplines'])
@@ -67,37 +71,113 @@ def AAT_degree_processing(student_id, courses, major, major_name, major_course_r
         missing_major_courses=major_report.missing_courses_dict2)
     degree_completion.degree_completion()
 
+
+def sorting_majors(major_name, major_course_requirements, **kwargs):
+    student_id_list = []
+
+    for i in range(len(enrollment_history)):
+        if enrollment_history.loc[i, "ID"] not in student_id_list:
+
+            if enrollment_history.loc[i, "Major"] == major_name:
+                student_id_list.append(enrollment_history.loc[i, "ID"])
+                print(student_id_list)
+
+    for student_id in student_id_list:
+        AAT_degree_processing(student_id=student_id, courses=enrollment_history, major_name=major_name,
+                          major_course_requirements=major_course_requirements, **kwargs)
+
+
 pd.set_option('display.max_columns', None)
+student_id_and_major = pd.read_csv(
+    "C:/Users/fmixson/Desktop/Programming/LA_Division_Majors.csv")
+# print(student_id_and_major)
 
-student_course_list = pd.read_csv(
-    "C:/Users/fmixson/Desktop/Programming/Enrollment_Histories/AbitShorterList.csv")
+id_and_major_dict = {}
 
-student_id_list = []
+for i in range(len(student_id_and_major)):
+    id_and_major_dict[student_id_and_major.loc[i, "Employee ID"]] = student_id_and_major.loc[i, "Major"]
+    # print(id_and_major_dict)
 
-for i in range(len(student_course_list)):
-    if student_course_list.loc[i, "ID"] not in student_id_list:
-        student_id_list.append(student_course_list.loc[i, "ID"])
-print(student_id_list)
-for student_id in student_id_list:
+enrollment_history = pd.read_csv(
+    "C:/Users/fmixson/Desktop/Programming/Enrollment_Histories/EnrollmentHistory_20210817.csv")
 
-    AAT_degree_processing(student_id=student_id, courses=student_course_list, major='comm_major_requirements',
-                          major_name="COMM_AAT", major_course_requirements='AAT_COMM.csv',
-                          major1='Core', major1_units=3, major1_disciplines=1,
-                          major2='ListA', major2_units=6, major2_disciplines=1,
-                          major3='ListB', major3_units=3, major3_disciplines=1,
-                          major4='ListC', major4_units=3, major4_disciplines=1)
+"""
+Create new column then do for loop with if statement. 
+if the id in dictionary matches id in dataframe then put the major in the new column.
+"""
+for key in id_and_major_dict:
+    print(id_and_major_dict)
+    print(len(id_and_major_dict))
+    for i in range(1, len(enrollment_history)):
+        # print(i)
+        if key == enrollment_history.loc[i, "ID"]:
+            # print(key, enrollment_history.loc[i, "ID"])
+            enrollment_history.loc[i, "Major"] = id_and_major_dict[key]
+            # print(enrollment_history)
 
-    # AAT_degree_processing(student_id=student_id, courses=student_course_list, major='english_major_requirements',
-    #                       major_name="English_AAT", major_course_requirements='AAT_English.csv',
-    #                       major1='Core', major1_units=3, major1_disciplines=1,
-    #                       major2='ListA', major2_units=6, major2_disciplines=1,
-    #                       major3='ListB', major3_units=3, major3_disciplines=1,
-    #                       major4='ListC', major4_units=3, major4_disciplines=1)
-    #
-    # AAT_degree_processing(student_id=student_id, courses=student_course_list, major='english_major_requirements',
-    #                       major_name="Spanish_AAT", major_course_requirements='AAT_Spanish.csv',
-    #                       major1='Core', major1_units=19, major1_disciplines=1,
-    #                       major2='ListA', major2_units=3, major2_disciplines=1)
+sorting_majors(major_name="Comm Studies for Transfer-AAT", major_course_requirements='AAT_COMM.csv',
+               major1='Core', major1_units=3, major1_disciplines=1,
+               major2='ListA', major2_units=6, major2_disciplines=1,
+               major3='ListB', major3_units=3, major3_disciplines=1,
+               major4='ListC', major4_units=3, major4_disciplines=1)
+sorting_majors(major_name="English for Transfer-AAT", major_course_requirements='AAT_English.csv',
+               major1='Core', major1_units=3, major1_disciplines=1,
+               major2='ListA', major2_units=6, major2_disciplines=1,
+               major3='ListB', major3_units=6, major3_disciplines=1,
+               major4='ListC', major4_units=3, major4_disciplines=1)
+# sorting_majors(major="American Sign Language-AA", major_course_requirements='ASL_AA.csv',
+#                major1="Core", major1_units=19, major1_disciplines=1,
+#                major2="ListA", major2_units=3, major2_disciplines=1)
+# sorting_majors(major="English/Tran-AA", major_course_requirements='English_AA.csv',
+#                major1="Core1", major1_units=4, major1_disciplines=1,
+#                major2="Core2", major2_units=3, major2_disciplines=1,
+#                major3="Lit", major3_units=12, major3_disciplines=1)
+# sorting_majors(major="French-AA", major_course_requirements='Fren_AA.csv',
+#                major1="Core", major1_units=26, major1_disciplines=1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+# pd.set_option('display.max_columns', None)
+#
+# student_course_list = pd.read_csv(
+#     "C:/Users/fmixson/Desktop/Programming/Enrollment_Histories/EnrollmentHistory_20210817.csv")
+#
+# student_id_list = []
+#
+# for i in range(len(student_course_list)):
+#     if student_course_list.loc[i, "ID"] not in student_id_list:
+#         student_id_list.append(student_course_list.loc[i, "ID"])
+# # print(student_id_list)
+# for student_id in student_id_list:
+#
+#     AAT_degree_processing(student_id=student_id, courses=student_course_list, major='comm_major_requirements',
+#                           major_name="COMM_AAT", major_course_requirements='AAT_COMM.csv',
+#                           major1='Core', major1_units=3, major1_disciplines=1,
+#                           major2='ListA', major2_units=6, major2_disciplines=1,
+#                           major3='ListB', major3_units=3, major3_disciplines=1,
+#                           major4='ListC', major4_units=3, major4_disciplines=1)
+#
+#     AAT_degree_processing(student_id=student_id, courses=student_course_list, major='english_major_requirements',
+#                           major_name="English_AAT", major_course_requirements='AAT_English.csv',
+#                           major1='Core', major1_units=3, major1_disciplines=1,
+#                           major2='ListA', major2_units=6, major2_disciplines=1,
+#                           major3='ListB', major3_units=6, major3_disciplines=1,
+#                           major4='ListC', major4_units=3, major4_disciplines=1)
+#     #
+#     AAT_degree_processing(student_id=student_id, courses=student_course_list, major='spanish_major_requirements',
+#                           major_name="Spanish_AAT", major_course_requirements='AAT_Spanish.csv',
+#                           major1='Core', major1_units=19, major1_disciplines=1,
+#                           major2='ListA', major2_units=3, major2_disciplines=1)
 
 DegreeCompletionReport.LS_AA_Degrees_df.sort_values(by=['Total_Missing'], inplace=True, ascending=True)
 DegreeCompletionReport.LS_AA_Degrees_df.to_csv('C:/Users/fmixson/Desktop/Programming/AAT_LA_Division_Degrees.csv')
