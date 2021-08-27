@@ -76,6 +76,7 @@ class MajorRequirements:
         area_units_list = []
         ge_course_list = []
         print('revised', self.revised_course_list)
+        print('major', self.major_name)
         Option = 2
         if self.major_name == 'English for Transfer-AAT':
             if "ENGL 103" in self.revised_course_list:
@@ -90,7 +91,7 @@ class MajorRequirements:
                 total_units = 3
 
         self.major_requirements_dict[area_name] = total_units
-        print('total units', self.major_requirements_dict)
+        # print('total units', self.major_requirements_dict)
         if total_units == '':
             pass
         else:
@@ -147,8 +148,8 @@ class MajorRequirements:
                     #     self.major_no_courses_requirement_dict = {'Core': 2, 'ListA': 2, 'ListB': 1, 'ListC': 1}
                     total_area_units = sum(area_units_list)
                     self.area_units_dict[area_name] = total_area_units
-        print('area units dict', self.area_units_dict)
-        print('maj no course dict', self.major_no_courses_requirement_dict)
+        # print('area units dict', self.area_units_dict)
+        # print('maj no course dict', self.major_no_courses_requirement_dict)
         return self.major_requirements_dict, self.major_course_dict, self.major_no_courses_requirement_dict
 
 

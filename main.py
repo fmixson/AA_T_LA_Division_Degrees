@@ -77,10 +77,10 @@ def sorting_majors(major_name, major_course_requirements, **kwargs):
 
     for i in range(len(enrollment_history)):
         if enrollment_history.loc[i, "ID"] not in student_id_list:
-
+            # print('major in sorting majors', major_name)
             if enrollment_history.loc[i, "Major"] == major_name:
                 student_id_list.append(enrollment_history.loc[i, "ID"])
-                print(student_id_list)
+                print('enrollment history', enrollment_history)
 
     for student_id in student_id_list:
         AAT_degree_processing(student_id=student_id, courses=enrollment_history, major_name=major_name,
@@ -106,14 +106,14 @@ Create new column then do for loop with if statement.
 if the id in dictionary matches id in dataframe then put the major in the new column.
 """
 for key in id_and_major_dict:
-    print(id_and_major_dict)
-    print(len(id_and_major_dict))
+    # print(id_and_major_dict)
+    # print(len(id_and_major_dict))
     for i in range(1, len(enrollment_history)):
         # print(i)
         if key == enrollment_history.loc[i, "ID"]:
-            # print(key, enrollment_history.loc[i, "ID"])
+            enrollment_history.to_csv('C:/Users/fmixson/Desktop/Programming/enrollment_dataframe.csv')
             enrollment_history.loc[i, "Major"] = id_and_major_dict[key]
-            # print(enrollment_history)
+            print(enrollment_history)
 
 sorting_majors(major_name="Comm Studies for Transfer-AAT", major_course_requirements='AAT_COMM.csv',
                major1='Core', major1_units=3, major1_disciplines=1,
@@ -125,15 +125,10 @@ sorting_majors(major_name="English for Transfer-AAT", major_course_requirements=
                major2='ListA', major2_units=6, major2_disciplines=1,
                major3='ListB', major3_units=6, major3_disciplines=1,
                major4='ListC', major4_units=3, major4_disciplines=1)
-# sorting_majors(major="American Sign Language-AA", major_course_requirements='ASL_AA.csv',
-#                major1="Core", major1_units=19, major1_disciplines=1,
-#                major2="ListA", major2_units=3, major2_disciplines=1)
-# sorting_majors(major="English/Tran-AA", major_course_requirements='English_AA.csv',
-#                major1="Core1", major1_units=4, major1_disciplines=1,
-#                major2="Core2", major2_units=3, major2_disciplines=1,
-#                major3="Lit", major3_units=12, major3_disciplines=1)
-# sorting_majors(major="French-AA", major_course_requirements='Fren_AA.csv',
-#                major1="Core", major1_units=26, major1_disciplines=1)
+sorting_majors(major_name="Spanish for Transfer-AAT", major_course_requirements='AAT_Spanish.csv',
+               major1='Core', major1_units=19, major1_disciplines=1,
+               major2='ListA', major2_units=3, major2_disciplines=1)
+
 
 
 
